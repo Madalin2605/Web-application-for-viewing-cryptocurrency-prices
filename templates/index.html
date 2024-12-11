@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #ffffff; /* Fundal verde deschis */
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            background-color: #d4f5d0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 8px;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #28a745;
+            text-align: center;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+
+        #crypto-info {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .crypto-info {
+            margin-top: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .chart-container canvas {
+            max-width: 100%;
+            height: 400px;
+        }
+
+        #customModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #d4f5d0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="mb-4">Crypto Information App</h2>
+        <form method="post">
+            <div class="form-group">
+                <label for="name">Cryptocurrency</label>
+                <select name="name" class="form-control">
+                    {% for name in coins %}
+                    <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="interval">Selectează intervalul:</label>
+                <select name="interval" class="form-control">
+                    <option value="24h">1 zi</option>
+                    <option value="7d">1 săptămână</option>
+                    <option value="30d">1 lună</option>
+                    <option value="3m">3 luni</option>
+                    <option value="1y">1 an</option>
+                    <option value="3y">3 ani</option>
+                    <option value="5y">5 ani</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success btn-block">Afisează Informațiile</button>
+            <button type="button" class="btn btn-primary btn-block" id="show-chart-btn">Vizualizare grafic</button>
+        </form>
+
+        <div id="crypto-info">
+            {% if info %}
+            <h3 class="mt-4">Informații pentru {{ name }}</h3>
+            <table class="table text-center">
+                <thead>
+                    <tr>
+                        <th scope="col" style="font-weight: bold;">Symbol</th>
+                        <th scope="col" style="font-weight: bold;">Name</th>
+                        <th scope="col" style="font-weight: bold;">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if info.name == name %}
+                    <tr>
+                        <td style="font-weight: bold;">{{ info.symbol }}</td>
+                        <td style="font-weight: bold;">{{ info.name }}</td>
+                        <td style="font-weight: bold;">{{ info.price }}$</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            {% endif %}
+
+            {% if html_fig %}
+                <div class="crypto-info">
+                    {{ html_fig|safe }}
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div id="customModal">
+            <div class="modal-content">
+                {% if html_fig2 %}
+                    <div class="crypto-info">
+                        {{ html_fig2|safe }}
+                    </div>
+                {% endif %}
+                <button type="button" class="btn btn-dark" onclick="closeCustomModal()">Închide</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Funcție pentru deschiderea modalului și afișarea elementului HTML
+        function openCustomModal() {
+            // Afișează div-ul cu html_fig și butonul "Închide"
+            $('#html_fig_and_close').show();
+            // Adaugă conținutul HTML în modal
+            $('#html_fig_content').html($('#html_fig').html());
+            // Afișează modalul
+            $('#customModal').show();
+        }
+
+        // Funcție pentru închiderea modalului
+        function closeCustomModal() {
+            // Ascunde div-ul cu html_fig și butonul "Închide"
+            $('#html_fig_and_close').hide();
+            // Ascunde modalul
+            $('#customModal').hide();
+        }
+
+        // Adaugă un eveniment pentru a apela funcția openCustomModal() la clic pe butonul "Vizualizare grafic"
+        $('#show-chart-btn').on('click', openCustomModal);
+    </script>
+
+</body>
+
+</html>
